@@ -2,11 +2,15 @@ import express, {Request, Response} from "express";
 import {Contact} from "../types/Contact";
 import * as contactModel from "../models/contact";
 
-export const contactRouter = express.Router();
+
+import bodyParser from "body-parser";
+
+var jsonParser = bodyParser.json();
+const contactRouter = express.Router();
 
 
-contactRouter.get("/messages", async (req: Request, res: Response) => {
-  contactModel.findAllMessages((err: Error, messages: Contact[]) => {
+contactRouter.get("/", async (req: Request, res: Response) => {
+  contactModel.findAll((err: Error, messages: Contact[]) => {
     if (err) {
       return res.status(500).json({"errorMessage": err.message});
     }
@@ -14,3 +18,5 @@ contactRouter.get("/messages", async (req: Request, res: Response) => {
     res.status(200).json({"data": messages});
   });
 });
+
+export {contactRouter};

@@ -1,18 +1,27 @@
-import { RowDataPacket } from "mysql2";
+
 import { db } from "../db";
+import { RowDataPacket } from "mysql2";
 import { Contact } from "../types/Contact";
-
-// Returnează doar mesajele din tabela contact
-
-
-export const findAllMessages = (callback: Function) => {
-  const queryString = `SELECT mesaj FROM contact`;
-  db.query<RowDataPacket[]>(queryString, (err, rows) => {
+// Get all posts
+export const findAll = (callback: Function) => {
+  const queryString = `SELECT * FROM contact`;
+  db.query(queryString, (err, result) => {
     if (err) {
-      return callback(err);
+      callback(err); 
     }
-    // rows este deja RowDataPacket[]
-    const messages = rows.map((row) => ({ mesaj: row.mesaj }));
+    const rows = <RowDataPacket[]>result;
+    const messages: Contact[] = [];
+    rows.forEach((row) => {
+      const message: Contact = {
+        id: row.id,
+        nume: row.nume,
+        prenume: row.prenume,
+        email: row.email,
+        data_adaugare: row.data_adaugare,
+        mesaj: row.mesaj
+      };
+      messages.push(message);
+    });
     callback(null, messages);
   });
 };
